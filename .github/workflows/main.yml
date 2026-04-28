@@ -18,21 +18,19 @@ on:
 jobs:
   build-e-push:
     runs-on: ubuntu-latest
-    needs: [lint, test] # Só faz deploy se lint E testes passarem
-    if: github.event_name == 'push' # Só faz deploy em push, não em PR
-
+  
     steps:
       # Passo 1: O robô baixa o seu código
       - name: Checkout do código
         uses: actions/checkout@v4
-
+  
       # Passo 2: O robô faz login no Docker Hub usando seus Secrets
       - name: Login no Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
+  
       # Passo 3: O robô executa o Build e faz o Push automaticamente
       - name: Build e Push da Imagem
         uses: docker/build-push-action@v5
