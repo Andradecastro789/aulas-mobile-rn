@@ -1,4 +1,4 @@
-name: Deploy do Exemplo Carrinho para o Docker Hub
+name: Deploy do Exemplo Carrinho para Docker Hub + Azure
 
 on:
   push:
@@ -19,15 +19,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Baixa o código
       - name: Checkout do código
         uses: actions/checkout@v4
 
+      # 2. Login no Docker Hub
       - name: Login no Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      # 3. Build e Push da imagem
       - name: Build e Push da Imagem
         uses: docker/build-push-action@v5
         with:
@@ -36,6 +39,13 @@ jobs:
           push: true
           tags: mariaacastro/exemplo-carrinho:latest
 
+      # 4. Login no Azure (CORREÇÃO DO SEU ERRO)
+      - name: Login no Azure
+        uses: azure/login@v2
+        with:
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+
+      # 5. Deploy no Azure App Service
       - name: Deploy no Azure App Service
         uses: azure/webapps-deploy@v3
         with:
